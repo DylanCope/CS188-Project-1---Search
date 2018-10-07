@@ -74,14 +74,14 @@ def tinyMazeSearch(problem):
     return [s, s, w, s, w, w, s, w]
 
 
-def uniformedSearch(problem, fringe):
-    fringe.push((None, problem.getStartState(), None))
+def uninformedSearch(problem, fringe):
+    fringe.push((None, problem.getStartState(), None, 0))
     visited = dict()
 
-    def addSuccesorsToFringe(start):
-        for next, action, cost in problem.getSuccessors(start):
+    def addSuccesorsToFringe(start, cost):
+        for next, action, added_cost in problem.getSuccessors(start):
             if hash(next) not in visited:
-                fringe.push((start, next, action))
+                fringe.push((start, next, action, cost + added_cost))
 
     def pathTo(end):
         state, action = visited[hash(end)]
@@ -94,13 +94,19 @@ def uniformedSearch(problem, fringe):
         return actions[::-1]
 
     while not fringe.isEmpty():
-        start, next, action = fringe.pop()
+        start, next, action, cost = fringe.pop()
+
+        if hash(next) in visited:
+            continue
+
         visited[hash(next)] = (start, action)
 
         if problem.isGoalState(next):
             return pathTo(next)
 
-        addSuccesorsToFringe(next)
+        addSuccesorsToFringe(next, cost)
+
+    return []
 
 
 def depthFirstSearch(problem):
@@ -117,18 +123,18 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    return uniformedSearch(problem, util.Stack())
+    return uninformedSearch(problem, util.Stack())
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    return uniformedSearch(problem, util.Queue())
+    return uninformedSearch(problem, util.Queue())
 
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    lowestCostFringe = util.PriorityQueueWithFunction(lambda x: x[3])
+    return uninformedSearch(problem, lowestCostFringe)
 
 
 def nullHeuristic(state, problem=None):
