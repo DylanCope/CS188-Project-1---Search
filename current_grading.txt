@@ -1,0 +1,141 @@
+Starting on 10-8 at 0:25:05
+
+Question q1
+===========
+*** PASS: test_cases\q1\graph_backtrack.test
+*** 	solution:		['1:A->C', '0:C->G']
+*** 	expanded_states:	['A', 'D', 'C']
+*** PASS: test_cases\q1\graph_bfs_vs_dfs.test
+*** 	solution:		['2:A->D', '0:D->G']
+*** 	expanded_states:	['A', 'D']
+*** PASS: test_cases\q1\graph_infinite.test
+*** 	solution:		['0:A->B', '1:B->C', '1:C->G']
+*** 	expanded_states:	['A', 'B', 'C']
+*** PASS: test_cases\q1\graph_manypaths.test
+*** 	solution:		['2:A->B2', '0:B2->C', '0:C->D', '2:D->E2', '0:E2->F', '0:F->G']
+*** 	expanded_states:	['A', 'B2', 'C', 'D', 'E2', 'F']
+*** PASS: test_cases\q1\pacman_1.test
+*** 	pacman layout:		mediumMaze
+*** 	solution length: 130
+*** 	nodes expanded:		146
+
+### Question q1: 3/3 ###
+
+
+Question q2
+===========
+*** PASS: test_cases\q2\graph_backtrack.test
+*** 	solution:		['1:A->C', '0:C->G']
+*** 	expanded_states:	['A', 'B', 'C', 'D']
+*** PASS: test_cases\q2\graph_bfs_vs_dfs.test
+*** 	solution:		['1:A->G']
+*** 	expanded_states:	['A', 'B']
+*** PASS: test_cases\q2\graph_infinite.test
+*** 	solution:		['0:A->B', '1:B->C', '1:C->G']
+*** 	expanded_states:	['A', 'B', 'C']
+*** PASS: test_cases\q2\graph_manypaths.test
+*** 	solution:		['1:A->C', '0:C->D', '1:D->F', '0:F->G']
+*** 	expanded_states:	['A', 'B1', 'C', 'B2', 'D', 'E1', 'F', 'E2']
+*** PASS: test_cases\q2\pacman_1.test
+*** 	pacman layout:		mediumMaze
+*** 	solution length: 68
+*** 	nodes expanded:		269
+
+### Question q2: 3/3 ###
+
+
+Question q3
+===========
+*** PASS: test_cases\q3\graph_backtrack.test
+*** 	solution:		['1:A->C', '0:C->G']
+*** 	expanded_states:	['A', 'B', 'C', 'D']
+*** PASS: test_cases\q3\graph_bfs_vs_dfs.test
+*** 	solution:		['1:A->G']
+*** 	expanded_states:	['A', 'B']
+*** PASS: test_cases\q3\graph_infinite.test
+*** 	solution:		['0:A->B', '1:B->C', '1:C->G']
+*** 	expanded_states:	['A', 'B', 'C']
+*** PASS: test_cases\q3\graph_manypaths.test
+*** 	solution:		['1:A->C', '0:C->D', '1:D->F', '0:F->G']
+*** 	expanded_states:	['A', 'B1', 'C', 'B2', 'D', 'E1', 'F', 'E2']
+*** PASS: test_cases\q3\ucs_0_graph.test
+*** 	solution:		['Right', 'Down', 'Down']
+*** 	expanded_states:	['A', 'B', 'D', 'C', 'G']
+*** PASS: test_cases\q3\ucs_1_problemC.test
+*** 	pacman layout:		mediumMaze
+*** 	solution length: 68
+*** 	nodes expanded:		269
+*** PASS: test_cases\q3\ucs_2_problemE.test
+*** 	pacman layout:		mediumMaze
+*** 	solution length: 74
+*** 	nodes expanded:		260
+*** PASS: test_cases\q3\ucs_3_problemW.test
+*** 	pacman layout:		mediumMaze
+*** 	solution length: 152
+*** 	nodes expanded:		173
+*** PASS: test_cases\q3\ucs_4_testSearch.test
+*** 	pacman layout:		testSearch
+*** 	solution length: 7
+*** 	nodes expanded:		14
+*** PASS: test_cases\q3\ucs_5_goalAtDequeue.test
+*** 	solution:		['1:A->B', '0:B->C', '0:C->G']
+*** 	expanded_states:	['A', 'B', 'C']
+
+### Question q3: 3/3 ###
+
+
+Question q4
+===========
+*** Method not implemented: aStarSearch at line 151 of search.py
+*** FAIL: Terminated with a string exception.
+
+### Question q4: 0/3 ###
+
+
+Question q5
+===========
+*** Method not implemented: getStartState at line 298 of searchAgents.py
+*** FAIL: Terminated with a string exception.
+
+### Question q5: 0/3 ###
+
+
+Question q6
+===========
+*** NOTE: Make sure to complete Question q4 before working on Question q6,
+*** because Question q6 builds upon your answer for Question q4.
+
+
+Question q7
+===========
+*** NOTE: Make sure to complete Question q4 before working on Question q7,
+*** because Question q7 builds upon your answer for Question q4.
+
+
+Question q8
+===========
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+*** Method not implemented: findPathToClosestDot at line 488 of searchAgents.py
+*** FAIL: Terminated with a string exception.
+
+### Question q8: 0/3 ###
+
+
+Finished at 0:25:05
+
+Provisional grades
+==================
+Question q1: 3/3
+Question q2: 3/3
+Question q3: 3/3
+Question q4: 0/3
+Question q5: 0/3
+Question q6: 0/3
+Question q7: 0/4
+Question q8: 0/3
+------------------
+Total: 9/25
+
+Your grades are NOT yet registered.  To register your grades, make sure
+to follow your instructor's guidelines to receive credit on your project.
