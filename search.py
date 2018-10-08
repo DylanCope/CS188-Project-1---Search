@@ -74,7 +74,7 @@ def tinyMazeSearch(problem):
     return [s, s, w, s, w, w, s, w]
 
 
-def uninformedSearch(problem, fringe):
+def generalTreeSearch(problem, fringe):
     fringe.push((None, problem.getStartState(), None, 0))
     visited = dict()
 
@@ -123,18 +123,21 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    return uninformedSearch(problem, util.Stack())
+    return generalTreeSearch(problem, util.Stack())
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    return uninformedSearch(problem, util.Queue())
+    return generalTreeSearch(problem, util.Queue())
 
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    lowestCostFringe = util.PriorityQueueWithFunction(lambda x: x[3])
-    return uninformedSearch(problem, lowestCostFringe)
+    def fringeFn(item):
+        state_s, state_e, action, cost = item
+        return cost
+    fringe = util.PriorityQueueWithFunction(fringeFn)
+    return generalTreeSearch(problem, fringe)
 
 
 def nullHeuristic(state, problem=None):
@@ -147,8 +150,11 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    def fringeFn(item):
+        state_s, state_e, action, cost = item
+        return cost + heuristic(state_e, problem=problem)
+    fringe = util.PriorityQueueWithFunction(fringeFn)
+    return generalTreeSearch(problem, fringe)
 
 
 # Abbreviations

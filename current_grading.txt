@@ -1,4 +1,4 @@
-Starting on 10-8 at 0:25:05
+Starting on 10-8 at 11:41:39
 
 Question q1
 ===========
@@ -86,10 +86,27 @@ Question q3
 
 Question q4
 ===========
-*** Method not implemented: aStarSearch at line 151 of search.py
-*** FAIL: Terminated with a string exception.
+*** PASS: test_cases\q4\astar_0.test
+*** 	solution:		['Right', 'Down', 'Down']
+*** 	expanded_states:	['A', 'B', 'D', 'C', 'G']
+*** PASS: test_cases\q4\astar_1_graph_heuristic.test
+*** 	solution:		['0', '0', '2']
+*** 	expanded_states:	['S', 'A', 'D', 'C']
+*** PASS: test_cases\q4\astar_2_manhattan.test
+*** 	pacman layout:		mediumMaze
+*** 	solution length: 68
+*** 	nodes expanded:		221
+*** PASS: test_cases\q4\astar_3_goalAtDequeue.test
+*** 	solution:		['1:A->B', '0:B->C', '0:C->G']
+*** 	expanded_states:	['A', 'B', 'C']
+*** PASS: test_cases\q4\graph_backtrack.test
+*** 	solution:		['1:A->C', '0:C->G']
+*** 	expanded_states:	['A', 'B', 'C', 'D']
+*** PASS: test_cases\q4\graph_manypaths.test
+*** 	solution:		['1:A->C', '0:C->D', '1:D->F', '0:F->G']
+*** 	expanded_states:	['A', 'B1', 'C', 'B2', 'D', 'E1', 'F', 'E2']
 
-### Question q4: 0/3 ###
+### Question q4: 3/3 ###
 
 
 Question q5
@@ -102,14 +119,20 @@ Question q5
 
 Question q6
 ===========
-*** NOTE: Make sure to complete Question q4 before working on Question q6,
-*** because Question q6 builds upon your answer for Question q4.
+*** Method not implemented: getStartState at line 298 of searchAgents.py
+*** FAIL: Terminated with a string exception.
+
+### Question q6: 0/3 ###
 
 
 Question q7
 ===========
-*** NOTE: Make sure to complete Question q4 before working on Question q7,
-*** because Question q7 builds upon your answer for Question q4.
+*** PASS: test_cases\q7\food_heuristic_1.test
+*** FAIL: test_cases\q7\food_heuristic_10.test
+*** Heuristic failed non-triviality test
+*** Tests failed.
+
+### Question q7: 0/4 ###
 
 
 Question q8
@@ -122,20 +145,21 @@ Question q8
 ### Question q8: 0/3 ###
 
 
-Finished at 0:25:05
+Finished at 11:41:39
 
 Provisional grades
 ==================
 Question q1: 3/3
 Question q2: 3/3
 Question q3: 3/3
-Question q4: 0/3
+Question q4: 3/3
 Question q5: 0/3
 Question q6: 0/3
 Question q7: 0/4
 Question q8: 0/3
 ------------------
-Total: 9/25
+Total: 12/25
 
 Your grades are NOT yet registered.  To register your grades, make sure
 to follow your instructor's guidelines to receive credit on your project.
+
