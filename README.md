@@ -1,6 +1,11 @@
 # Project 1: Search
 Version 1.002. Last Updated: 08/27/2018.
 
+**Disclaimer:**
+This is my attempt at the CS188 coursework 1 from the University of California, Berkeley. I am not a student at U.C. Berkeley, however, I've been following the online resources available at https://inst.eecs.berkeley.edu/~cs188/fa18/.
+
+This README is a modified version of the project page on the website. Many details have been removed and there are sections detailing my answers to each question. 
+
 ## Table of Contents
 * Introduction
 * Welcome
@@ -114,6 +119,56 @@ The Pacman board will show an overlay of the states explored, and the order in w
 
 **Hint:** If you use a Stack as your data structure, the solution found by your DFS algorithm for `mediumMaze` should have a length of 130 (provided you push successors onto the fringe in the order provided by `getSuccessors`; you might get 246 if you push them in the reverse order). Is this a least cost solution? If not, think about what depth-first search is doing wrong.
 
+## Answer
+
+The following is the code implementing a general search process where the DFS is a specific version with a stack as the fringe. This means that things put onto the fringe first are dealt with last, therefore, when a node `n` is dequeued it will put all of it's successors on the fringe to be dealt with before the nodes alongside `n` depth-wise.
+
+```py
+def generalTreeSearch(problem, fringe):
+    fringe.push((None, problem.getStartState(), None, 0))
+    visited = dict()
+
+    def addSuccesorsToFringe(start, cost):
+        for next, action, added_cost in problem.getSuccessors(start):
+            if hash(next) not in visited:
+                fringe.push((start, next, action, cost + added_cost))
+
+    def pathTo(end):
+        state, action = visited[hash(end)]
+        actions = []
+
+        while action is not None:
+            actions.append(action)
+            state, action = visited[hash(state)]
+
+        return actions[::-1]
+
+    while not fringe.isEmpty():
+        start, next, action, cost = fringe.pop()
+
+        if hash(next) in visited:
+            continue
+
+        visited[hash(next)] = (start, action)
+
+        if problem.isGoalState(next):
+            return pathTo(next)
+
+        addSuccesorsToFringe(next, cost)
+
+    return []
+
+
+def depthFirstSearch(problem):
+    """
+    Search the deepest nodes in the search tree first.
+
+    Your search algorithm needs to return a list of actions that reaches the
+    goal. Make sure to implement a graph search algorithm.
+    """
+    return generalTreeSearch(problem, util.Stack())
+```
+
 ---
 
 ## Question 2 (3 points): Breadth First Search
@@ -130,6 +185,16 @@ Does BFS find a least cost solution? If not, check your implementation.
 **Note:** If you've written your search code generically, your code should work equally well for the eight-puzzle search problem without any changes.
 
 `python eightpuzzle.py`
+
+## Answer
+
+Building upon the answer for question 1, the general search algorithm is used again except with a queue as the fringe, therefore, allowing all the nodes at a given depth to be dealt with contiguously.
+
+```py
+def breadthFirstSearch(problem):
+    """Search the shallowest nodes in the search tree first."""
+    return generalTreeSearch(problem, util.Queue())
+```
 
 ---
 
@@ -148,6 +213,20 @@ Implement the uniform-cost graph search algorithm in the `uniformCostSearch` fun
 
 Note: You should get very low and very high path costs for the `StayEastSearchAgent` and `StayWestSearchAgent` respectively, due to their exponential cost functions (see `searchAgents.py` for details).
 
+## Answer
+
+The general search algorithm is used once again, however, now the fringe is PriorityQueue where the priority is derived from a fringe item `(state, next_state, action, cost)` by taking the cost.
+
+```py
+def uniformCostSearch(problem):
+    """Search the node of least total cost first."""
+    def fringeFn(item):
+        state_s, state_e, action, cost = item
+        return cost
+    fringe = util.PriorityQueueWithFunction(fringeFn)
+    return generalTreeSearch(problem, fringe)
+```
+
 ---
 
 ## Question 4 (3 points): A* search
@@ -159,6 +238,20 @@ You can test your A* implementation on the original problem of finding a path th
 `python pacman.py -l bigMaze -z .5 -p SearchAgent -a fn=astar,heuristic=manhattanHeuristic`
 
 You should see that A* finds the optimal solution slightly faster than uniform cost search (about 549 vs. 620 search nodes expanded in our implementation, but ties in priority may make your numbers differ slightly). What happens on `openMaze` for the various search strategies?
+
+## Answer
+
+The answer here is similar to the UCS example, however, the priority of an item is given by it's cost plus the heuristic for the end state of the action. This is given by the definition of A*.
+
+```py
+def aStarSearch(problem, heuristic=nullHeuristic):
+    """Search the node that has the lowest combined cost and heuristic first."""
+    def fringeFn(item):
+        state_s, state_e, action, cost = item
+        return cost + heuristic(state_e, problem=problem)
+    fringe = util.PriorityQueueWithFunction(fringeFn)
+    return generalTreeSearch(problem, fringe)
+```
 
 ---
 
@@ -181,6 +274,84 @@ To receive full credit, you need to define an abstract state representation that
 **Hint:** The only parts of the game state you need to reference in your implementation are the starting Pacman position and the location of the four corners.
 
 Our implementation of `breadthFirstSearch` expands just under 2000 search nodes on `mediumCorners`. However, heuristics (used with A* search) can reduce the amount of searching required.
+
+## Answer
+
+The following is the relevant changes made to the `CornersProblem` class. The approach was to store the state as a tuple of Pacman's position and the remaining corners to be visited. The problem is solved when Pacman's position is equal to the only remaining unvisited corner. The successors are computed by filtering illegal locations and then constructing the next state by filtering the unvisited corners to make sure none of them are Pacman's current position.
+
+```py
+class CornersProblem(search.SearchProblem):
+    """
+    This search problem finds paths through all four corners of a layout.
+
+    You must select a suitable state space and successor function
+    """
+
+    def __init__(self, startingGameState):
+        """
+        Stores the walls, pacman's starting position and corners.
+        """
+        self.walls = startingGameState.getWalls()
+        self.startingPosition = startingGameState.getPacmanPosition()
+        top, right = self.walls.height-2, self.walls.width-2
+        self.corners = ((1, 1), (1, top), (right, 1), (right, top))
+        for corner in self.corners:
+            if not startingGameState.hasFood(*corner):
+                print('Warning: no food in corner ' + str(corner))
+        self._expanded = 0  # DO NOT CHANGE; Number of search nodes expanded
+        # Please add any code here which you would like to use
+        # in initializing the problem
+
+        self.startState = (self.startingPosition, self.corners)
+
+    def getStartState(self):
+        """
+        Returns the start state (in your state space, not the full Pacman state
+        space)
+        """
+        return self.startState
+
+    def isGoalState(self, state):
+        """
+        Returns whether this search state is a goal state of the problem.
+        """
+        pacmanPos, unvisitedCorners = state
+        return unvisitedCorners == (pacmanPos,)
+
+    def getSuccessors(self, state):
+        """
+        Returns successor states, the actions they require, and a cost of 1.
+
+         As noted in search.py:
+            For a given state, this should return a list of triples, (successor,
+            action, stepCost), where 'successor' is a successor to the current
+            state, 'action' is the action required to get there, and 'stepCost'
+            is the incremental cost of expanding to that successor
+        """
+        pacmanPos, unvisitedCorners = state
+
+        successors = []
+
+        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+            x, y = pacmanPos
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+
+            hitsWall = self.walls[nextx][nexty]
+            if hitsWall:
+                continue
+
+            nextPacmanPos = (nextx, nexty)
+            nextUnvistedCorners = tuple(
+                corner for corner in unvisitedCorners
+                if corner != pacmanPos
+            )
+            nextState = (nextPacmanPos, nextUnvistedCorners)
+            successors.append((nextState, action, 1))
+
+        self._expanded += 1  # DO NOT CHANGE
+        return successors
+```
 
 ---
 
@@ -212,6 +383,48 @@ Remember that admissibility isn't enough to guarantee correctness in graph searc
 | at most 1200 |	3/3 |
 
 **Remember:** If your heuristic is inconsistent, you will receive no credit, so be careful!
+
+## Answer
+
+The idea behind this heuristic was to imagine the length of the optimal path between the four corner's in the situation where all the walls had been taken away. This is computed by starting with Pacman's position and pretending to go to the closest corner (of the remaining unvisited corners), crossing that corner off the list and repeating until there are no corners to visit. The heuristic is only zero when the game is in a solved state, and it is consistent because if there are any walls in the way the path will be necessarily worse. Furthermore, this heuristic solved the problem optimally with only **expanding 702 nodes**.
+
+```py
+def cornersHeuristic(state, problem):
+    """
+    A heuristic for the CornersProblem that you defined.
+
+      state:   The current search state
+               (a data structure you chose in your search problem)
+
+      problem: The CornersProblem instance for this layout.
+
+    This function should always return a number that is a lower bound on the
+    shortest path from the state to a goal of the problem; i.e.  it should be
+    admissible (as well as consistent).
+    """
+    distance = util.manhattanDistance
+
+    def distanceArgmin(pos, points):
+        # large value for map
+        index, dist = None, problem.walls.height + problem.walls.width
+        for i, point in enumerate(points):
+            d = distance(pos, point)
+            if d < dist:
+                index, dist = i, d
+        return index, dist
+
+    pacmanPos, unvisitedCorners = state
+    corners = list(unvisitedCorners)
+    pos = pacmanPos
+    heuristic = 0
+    while corners != []:
+        index, dist = distanceArgmin(pos, corners)
+        heuristic += dist
+        pos = corners[index]
+        corners.pop(index)
+
+    return heuristic
+```
 
 ---
 
