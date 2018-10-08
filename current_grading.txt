@@ -1,4 +1,4 @@
-Starting on 10-8 at 11:41:39
+Starting on 10-8 at 17:28:04
 
 Question q1
 ===========
@@ -111,18 +111,23 @@ Question q4
 
 Question q5
 ===========
-*** Method not implemented: getStartState at line 298 of searchAgents.py
-*** FAIL: Terminated with a string exception.
+*** PASS: test_cases\q5\corner_tiny_corner.test
+*** 	pacman layout:		tinyCorner
+*** 	solution length:		28
 
-### Question q5: 0/3 ###
+### Question q5: 3/3 ###
 
 
 Question q6
 ===========
-*** Method not implemented: getStartState at line 298 of searchAgents.py
-*** FAIL: Terminated with a string exception.
+*** PASS: heuristic value less than true cost at start state
+*** PASS: heuristic value less than true cost at start state
+*** PASS: heuristic value less than true cost at start state
+path: ['North', 'East', 'East', 'East', 'East', 'North', 'North', 'West', 'West', 'West', 'West', 'North', 'North', 'North', 'North', 'North', 'North', 'North', 'North', 'West', 'West', 'West', 'West', 'South', 'South', 'East', 'East', 'East', 'East', 'South', 'South', 'South', 'South', 'South', 'South', 'West', 'West', 'South', 'South', 'South', 'West', 'West', 'East', 'East', 'North', 'North', 'North', 'East', 'East', 'East', 'East', 'East', 'East', 'East', 'East', 'South', 'South', 'East', 'East', 'East', 'East', 'East', 'North', 'North', 'East', 'East', 'North', 'North', 'East', 'East', 'North', 'North', 'East', 'East', 'East', 'East', 'South', 'South', 'South', 'South', 'East', 'East', 'North', 'North', 'East', 'East', 'South', 'South', 'South', 'South', 'South', 'North', 'North', 'North', 'North', 'North', 'North', 'North', 'West', 'West', 'North', 'North', 'East', 'East', 'North', 'North']
+path length: 106
+*** PASS: Heuristic resulted in expansion of 702 nodes
 
-### Question q6: 0/3 ###
+### Question q6: 3/3 ###
 
 
 Question q7
@@ -139,13 +144,13 @@ Question q8
 ===========
 [SearchAgent] using function depthFirstSearch
 [SearchAgent] using problem type PositionSearchProblem
-*** Method not implemented: findPathToClosestDot at line 488 of searchAgents.py
+*** Method not implemented: findPathToClosestDot at line 557 of searchAgents.py
 *** FAIL: Terminated with a string exception.
 
 ### Question q8: 0/3 ###
 
 
-Finished at 11:41:39
+Finished at 17:28:04
 
 Provisional grades
 ==================
@@ -153,12 +158,12 @@ Question q1: 3/3
 Question q2: 3/3
 Question q3: 3/3
 Question q4: 3/3
-Question q5: 0/3
-Question q6: 0/3
+Question q5: 3/3
+Question q6: 3/3
 Question q7: 0/4
 Question q8: 0/3
 ------------------
-Total: 12/25
+Total: 18/25
 
 Your grades are NOT yet registered.  To register your grades, make sure
 to follow your instructor's guidelines to receive credit on your project.
