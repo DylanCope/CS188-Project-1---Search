@@ -41,6 +41,7 @@ import util
 import time
 import search
 
+import math
 from functools import partial
 
 
@@ -381,12 +382,32 @@ class CornersProblem(search.SearchProblem):
         return len(actions)
 
 
+def distanceArgmin(pos, points):
+    index, dist = None, math.inf
+    for i, point in enumerate(points):
+        d = util.manhattanDistance(pos, point)
+        if d < dist:
+            index, dist = i, d
+    return index, dist
+
+
+def optimalPathWithoutWalls(fromPos, throughPoints):
+    points = list(throughPoints)
+    pos, pathLength = fromPos, 0
+    while points != []:
+        index, dist = distanceArgmin(pos, points)
+        pathLength += dist
+        pos = points[index]
+        points.pop(index)
+
+    return pathLength
+
+
 def cornersHeuristic(state, problem):
     """
     A heuristic for the CornersProblem that you defined.
 
-      state:   The current search state
-               (a data structure you chose in your search problem)
+      state:   The current search state tuple; (pacmanPos, unvisitedCorners)
 
       problem: The CornersProblem instance for this layout.
 
@@ -394,28 +415,7 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    distance = util.manhattanDistance
-
-    def distanceArgmin(pos, points):
-        # large value for map
-        index, dist = None, problem.walls.height + problem.walls.width
-        for i, point in enumerate(points):
-            d = distance(pos, point)
-            if d < dist:
-                index, dist = i, d
-        return index, dist
-
-    pacmanPos, unvisitedCorners = state
-    corners = list(unvisitedCorners)
-    pos = pacmanPos
-    heuristic = 0
-    while corners != []:
-        index, dist = distanceArgmin(pos, corners)
-        heuristic += dist
-        pos = corners[index]
-        corners.pop(index)
-
-    return heuristic
+    return optimalPathWithoutWalls(*state)
 
 
 class AStarCornersAgent(SearchAgent):

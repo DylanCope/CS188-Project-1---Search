@@ -4,7 +4,7 @@ Version 1.002. Last Updated: 08/27/2018.
 **Disclaimer:**
 This is my attempt at the CS188 coursework 1 from the University of California, Berkeley. I am not a student at U.C. Berkeley, however, I've been following the online resources available at https://inst.eecs.berkeley.edu/~cs188/fa18/.
 
-This README is a modified version of the project page on the website. Many details have been removed and there are sections detailing my answers to each question. 
+This README is a modified version of the project page on the website. Many details have been removed and there are sections detailing my answers to each question.
 
 ## Table of Contents
 * Introduction
@@ -389,12 +389,30 @@ Remember that admissibility isn't enough to guarantee correctness in graph searc
 The idea behind this heuristic was to imagine the length of the optimal path between the four corner's in the situation where all the walls had been taken away. This is computed by starting with Pacman's position and pretending to go to the closest corner (of the remaining unvisited corners), crossing that corner off the list and repeating until there are no corners to visit. The heuristic is only zero when the game is in a solved state, and it is consistent because if there are any walls in the way the path will be necessarily worse. Furthermore, this heuristic solved the problem optimally with only **expanding 702 nodes**.
 
 ```py
+def distanceArgmin(pos, points):
+    index, dist = None, math.inf
+    for i, point in enumerate(points):
+        d = util.manhattanDistance(pos, point)
+        if d < dist:
+            index, dist = i, d
+    return index, dist
+
+def optimalPathWithoutWalls(fromPos, throughPoints):
+    points = list(throughPoints)
+    pos, pathLength = fromPos, 0
+    while points != []:
+        index, dist = distanceArgmin(pos, points)
+        pathLength += dist
+        pos = points[index]
+        points.pop(index)
+
+    return pathLength
+
 def cornersHeuristic(state, problem):
     """
     A heuristic for the CornersProblem that you defined.
 
-      state:   The current search state
-               (a data structure you chose in your search problem)
+      state:   The current search state tuple; (pacmanPos, unvisitedCorners)
 
       problem: The CornersProblem instance for this layout.
 
@@ -402,28 +420,7 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    distance = util.manhattanDistance
-
-    def distanceArgmin(pos, points):
-        # large value for map
-        index, dist = None, problem.walls.height + problem.walls.width
-        for i, point in enumerate(points):
-            d = distance(pos, point)
-            if d < dist:
-                index, dist = i, d
-        return index, dist
-
-    pacmanPos, unvisitedCorners = state
-    corners = list(unvisitedCorners)
-    pos = pacmanPos
-    heuristic = 0
-    while corners != []:
-        index, dist = distanceArgmin(pos, corners)
-        heuristic += dist
-        pos = corners[index]
-        corners.pop(index)
-
-    return heuristic
+    return optimalPathWithoutWalls(*state)
 ```
 
 ---
