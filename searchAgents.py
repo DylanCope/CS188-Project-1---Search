@@ -42,7 +42,8 @@ import time
 import search
 
 import math
-from functools import partial
+import numpy as np
+from functools import partial, lru_cache
 
 
 class GoWestAgent(Agent):
@@ -382,25 +383,35 @@ class CornersProblem(search.SearchProblem):
         return len(actions)
 
 
-def distanceArgmin(pos, points):
-    index, dist = None, math.inf
-    for i, point in enumerate(points):
+@lru_cache(maxsize=None)
+def distanceMin(pos, points):
+    closestPoints, dist = [], math.inf
+    for point in set(points):
         d = util.manhattanDistance(pos, point)
         if d < dist:
-            index, dist = i, d
-    return index, dist
+            dist = d
+            closestPoints = [point]
+        if d == dist:
+            closestPoints.append(point)
+    return closestPoints, dist
 
 
-def optimalPathWithoutWalls(fromPos, throughPoints):
-    points = list(throughPoints)
-    pos, pathLength = fromPos, 0
-    while points != []:
-        index, dist = distanceArgmin(pos, points)
-        pathLength += dist
-        pos = points[index]
-        points.pop(index)
+@lru_cache(maxsize=None)
+def optimalPathWithoutWalls(fromPoint, throughPoints):
+    if throughPoints == ():
+        return 0
 
-    return pathLength
+    closestPoints, dist = distanceMin(fromPoint, throughPoints)
+
+    @lru_cache(maxsize=None)
+    def pointsWithout(p, points=throughPoints):
+        return tuple(filter(lambda x: x != p, points))
+
+    @lru_cache(maxsize=None)
+    def distanceToGoalFrom(p):
+        return optimalPathWithoutWalls(p, pointsWithout(p))
+
+    return dist + min(map(distanceToGoalFrom, closestPoints))
 
 
 def cornersHeuristic(state, problem):
@@ -443,7 +454,6 @@ class FoodSearchProblem:
         self.walls = startingGameState.getWalls()
         self.startingGameState = startingGameState
         self._expanded = 0  # DO NOT CHANGE
-        self.heuristicInfo = {}  # A dictionary for the heuristic to store information
 
     def getStartState(self):
         return self.start
@@ -518,8 +528,11 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    "*** YOUR CODE HERE ***"
-    return 0
+    distToPacman = partial(util.manhattanDistance, position)
+    distsToFoods = map(distToPacman, foodGrid.asList())
+    distToClosestFood = min(distsToFoods, default=1)
+    numFoodLeft = foodGrid.count()
+    return numFoodLeft + (distToClosestFood - 1)
 
 
 class ClosestDotSearchAgent(SearchAgent):
