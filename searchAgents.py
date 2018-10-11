@@ -43,7 +43,10 @@ import search
 
 import math
 import numpy as np
+import networkx as nx
+
 from functools import partial, lru_cache
+from itertools import combinations
 
 
 class GoWestAgent(Agent):
@@ -382,36 +385,38 @@ class CornersProblem(search.SearchProblem):
                 return 999999
         return len(actions)
 
-
-@lru_cache(maxsize=None)
-def distanceMin(pos, points):
-    closestPoints, dist = [], math.inf
-    for point in set(points):
+def distanceArgmin(pos, points):
+    index, dist = None, math.inf
+    for i, point in enumerate(points):
         d = util.manhattanDistance(pos, point)
         if d < dist:
-            dist = d
-            closestPoints = [point]
-        if d == dist:
-            closestPoints.append(point)
-    return closestPoints, dist
+            index, dist = i, d
+    return index, dist
 
+def optimalPathWithoutWalls(fromPos, throughPoints):
+    points = list(throughPoints)
+    pos, pathLength = fromPos, 0
+    while points != []:
+        index, dist = distanceArgmin(pos, points)
+        pathLength += dist
+        pos = points[index]
+        points.pop(index)
 
-@lru_cache(maxsize=None)
-def optimalPathWithoutWalls(fromPoint, throughPoints):
-    if throughPoints == ():
-        return 0
+    return pathLength
 
-    closestPoints, dist = distanceMin(fromPoint, throughPoints)
+def cornersHeuristic(state, problem):
+    """
+    A heuristic for the CornersProblem that you defined.
 
-    @lru_cache(maxsize=None)
-    def pointsWithout(p, points=throughPoints):
-        return tuple(filter(lambda x: x != p, points))
+      state:   The current search state tuple; (pacmanPos, unvisitedCorners)
 
-    @lru_cache(maxsize=None)
-    def distanceToGoalFrom(p):
-        return optimalPathWithoutWalls(p, pointsWithout(p))
+      problem: The CornersProblem instance for this layout.
 
-    return dist + min(map(distanceToGoalFrom, closestPoints))
+    This function should always return a number that is a lower bound on the
+    shortest path from the state to a goal of the problem; i.e.  it should be
+    admissible (as well as consistent).
+    """
+    return optimalPathWithoutWalls(*state)
 
 
 def cornersHeuristic(state, problem):
@@ -437,6 +442,20 @@ class AStarCornersAgent(SearchAgent):
             prob, cornersHeuristic)
         self.searchType = CornersProblem
 
+@lru_cache(maxsize=None)
+def getFoodIndices(gameState):
+    return {f : i for i, f in enumerate(gameState.getFood().asList())}
+
+@lru_cache(maxsize=None)
+def getFoodAdjacencyMatrix(gameState):
+    foodList = gameState.getFood().asList()
+    foodIndices = getFoodIndices(gameState)
+    numFood = len(foodList)
+    adjM = np.zeros((numFood, numFood))
+    for f1, f2 in combinations(foodList, 2):
+        i, j = foodIndices[f1], foodIndices[f2]
+        adjM[i, j] = adjM[j, i] = mazeDistance(gameState, f1, f2)
+    return adjM
 
 class FoodSearchProblem:
     """
@@ -454,6 +473,13 @@ class FoodSearchProblem:
         self.walls = startingGameState.getWalls()
         self.startingGameState = startingGameState
         self._expanded = 0  # DO NOT CHANGE
+
+        self.heuristicInfo = {
+            'initialFood'   : startingGameState.getFood().asList(),
+            'foodIndices'   : getFoodIndices(startingGameState),
+            'foodAdjMatrix' : getFoodAdjacencyMatrix(startingGameState),
+            'mazeDistFn'    : partial(mazeDistance, startingGameState)
+        }
 
     def getStartState(self):
         return self.start
@@ -499,6 +525,20 @@ class AStarFoodSearchAgent(SearchAgent):
         self.searchType = FoodSearchProblem
 
 
+def minimumSpanningTreeTotalWeight(adjM):
+    g = nx.from_numpy_matrix(adjM)
+    mst = nx.minimum_spanning_tree(g)
+    return sum(e[2]['weight'] for e in mst.edges(data=True))
+
+def foodAdjMatrixAfterEating(problem, foodLeft):
+    foodList = problem.heuristicInfo['initialFood']
+    foodIndices = problem.heuristicInfo['foodIndices']
+    M = problem.heuristicInfo['foodAdjMatrix'].copy()
+    for f in set(foodList).difference(set(foodLeft)):
+        i = foodIndices[f]
+        M[i, :] = M[:, i] = 0
+    return M
+
 def foodHeuristic(state, problem):
     """
     Your heuristic for the FoodSearchProblem goes here.
@@ -527,12 +567,13 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
-    position, foodGrid = state
-    distToPacman = partial(util.manhattanDistance, position)
-    distsToFoods = map(distToPacman, foodGrid.asList())
-    distToClosestFood = min(distsToFoods, default=1)
-    numFoodLeft = foodGrid.count()
-    return numFoodLeft + (distToClosestFood - 1)
+    pacmanPos, food = state
+    foodLeft = food.asList()
+    adjM = foodAdjMatrixAfterEating(problem, foodLeft)
+    mstTotalW = minimumSpanningTreeTotalWeight(adjM)
+    distToPacman = partial(problem.heuristicInfo['mazeDistFn'], pacmanPos)
+    closestFood = min(map(distToPacman, foodLeft), default=0)
+    return closestFood + mstTotalW
 
 
 class ClosestDotSearchAgent(SearchAgent):
@@ -607,7 +648,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         util.raiseNotDefined()
 
 
-def mazeDistance(point1, point2, gameState):
+def mazeDistance(gameState, point1, point2):
     """
     Returns the maze distance between any two points, using the search functions
     you have already built. The gameState can be any game state -- Pacman's

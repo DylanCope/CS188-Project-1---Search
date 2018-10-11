@@ -455,6 +455,90 @@ Any non-trivial non-negative consistent heuristic will receive 1 point. Make sur
 
 **Remember:** If your heuristic is inconsistent, you will receive no credit, so be careful! Can you solve `mediumSearch` in a short time? If so, we're either very, very impressed, or your heuristic is inconsistent.
 
+## Answer
+
+The approach for this solution was construct a fully-connected graph between all the food items were the weight between two items was the distance between them within the maze (i.e. the maze distance). The was computed using a breadth-first search for each pair of points and storing the result in an adjacency matrix. The heuristic was constructed by taking the maze distance to the closest food item plus the total weight across the minimum spanning tree of uneaten food items. Computing the adjacency matrix was an expensive operation, and therefore the result was cached and variants on the matrix were constructed by zeroing out the rows and columns corresponding to already eaten food pellets. The figure below shows the full and partial adjacency matrices for the medium search problem.
+
+This approach was graded 5/4 and **expanded 255 nodes**.
+
+![](./adj_mats.png)
+
+Experiments with Manhattan distance rather than maze distance yielded a grade of 4/4 and expanded 7137 nodes. Furthermore, this version of the program took significantly longer to run, confirming that computing the expensive adjacency matrix before searching for the solution did reduce the overall cost.
+
+The following is the core bits of code for the solution:
+```py
+def mazeDistance(gameState, point1, point2):
+    x1, y1 = point1
+    x2, y2 = point2
+    walls = gameState.getWalls()
+    assert not walls[x1][y1], 'point1 is a wall: ' + str(point1)
+    assert not walls[x2][y2], 'point2 is a wall: ' + str(point2)
+    prob = PositionSearchProblem(
+        gameState, start=point1, goal=point2, warn=False, visualize=False)
+    return len(search.bfs(prob))
+
+@lru_cache(maxsize=None)
+def getFoodIndices(gameState):
+    return {f : i for i, f in enumerate(gameState.getFood().asList())}
+
+@lru_cache(maxsize=None)
+def getFoodAdjacencyMatrix(gameState):
+    foodList = gameState.getFood().asList()
+    foodIndices = getFoodIndices(gameState)
+    numFood = len(foodList)
+    adjM = np.zeros((numFood, numFood))
+    for f1, f2 in combinations(foodList, 2):
+        i, j = foodIndices[f1], foodIndices[f2]
+        adjM[i, j] = adjM[j, i] = mazeDistance(gameState, f1, f2)
+    return adjM
+
+class FoodSearchProblem:
+    """
+    A search problem associated with finding the a path that collects all of the
+    food (dots) in a Pacman game.
+    """
+
+    def __init__(self, startingGameState):
+        self.start = (startingGameState.getPacmanPosition(),
+                      startingGameState.getFood())
+        self.walls = startingGameState.getWalls()
+        self.startingGameState = startingGameState
+        self._expanded = 0  # DO NOT CHANGE
+
+        self.heuristicInfo = {
+            'initialFood'   : startingGameState.getFood().asList(),
+            'foodIndices'   : getFoodIndices(startingGameState),
+            'foodAdjMatrix' : getFoodAdjacencyMatrix(startingGameState),
+            'mazeDistFn'    : partial(mazeDistance, startingGameState)
+        }
+
+...
+
+def minimumSpanningTreeTotalWeight(adjM):
+    g = nx.from_numpy_matrix(adjM)
+    mst = nx.minimum_spanning_tree(g)
+    return sum(e[2]['weight'] for e in mst.edges(data=True))
+
+def foodAdjMatrixAfterEating(problem, foodLeft):
+    foodList = problem.heuristicInfo['initialFood']
+    foodIndices = problem.heuristicInfo['foodIndices']
+    M = problem.heuristicInfo['foodAdjMatrix'].copy()
+    for f in set(foodList).difference(set(foodLeft)):
+        i = foodIndices[f]
+        M[i, :] = M[:, i] = 0
+    return M
+
+def foodHeuristic(state, problem):
+    pacmanPos, food = state
+    foodLeft = food.asList()
+    adjM = foodAdjMatrixAfterEating(problem, foodLeft)
+    mstTotalW = minimumSpanningTreeTotalWeight(adjM)
+    distToPacman = partial(problem.heuristicInfo['mazeDistFn'], pacmanPos)
+    closestFood = min(map(distToPacman, foodLeft), default=0)
+    return closestFood + mstTotalW
+
+```
+
 ---
 
 ## Question 8 (3 points): Suboptimal Search

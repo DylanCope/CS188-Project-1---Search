@@ -19,6 +19,8 @@ Pacman agents (in searchAgents.py).
 
 import util
 
+from functools import lru_cache
+
 
 class SearchProblem:
     """
