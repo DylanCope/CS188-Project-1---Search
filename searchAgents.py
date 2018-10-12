@@ -385,6 +385,7 @@ class CornersProblem(search.SearchProblem):
                 return 999999
         return len(actions)
 
+
 def distanceArgmin(pos, points):
     index, dist = None, math.inf
     for i, point in enumerate(points):
@@ -392,6 +393,7 @@ def distanceArgmin(pos, points):
         if d < dist:
             index, dist = i, d
     return index, dist
+
 
 def optimalPathWithoutWalls(fromPos, throughPoints):
     points = list(throughPoints)
@@ -403,6 +405,7 @@ def optimalPathWithoutWalls(fromPos, throughPoints):
         points.pop(index)
 
     return pathLength
+
 
 def cornersHeuristic(state, problem):
     """
@@ -442,9 +445,11 @@ class AStarCornersAgent(SearchAgent):
             prob, cornersHeuristic)
         self.searchType = CornersProblem
 
+
 @lru_cache(maxsize=None)
 def getFoodIndices(gameState):
-    return {f : i for i, f in enumerate(gameState.getFood().asList())}
+    return {f: i for i, f in enumerate(gameState.getFood().asList())}
+
 
 @lru_cache(maxsize=None)
 def getFoodAdjacencyMatrix(gameState):
@@ -456,6 +461,7 @@ def getFoodAdjacencyMatrix(gameState):
         i, j = foodIndices[f1], foodIndices[f2]
         adjM[i, j] = adjM[j, i] = mazeDistance(gameState, f1, f2)
     return adjM
+
 
 class FoodSearchProblem:
     """
@@ -475,10 +481,10 @@ class FoodSearchProblem:
         self._expanded = 0  # DO NOT CHANGE
 
         self.heuristicInfo = {
-            'initialFood'   : startingGameState.getFood().asList(),
-            'foodIndices'   : getFoodIndices(startingGameState),
-            'foodAdjMatrix' : getFoodAdjacencyMatrix(startingGameState),
-            'mazeDistFn'    : partial(mazeDistance, startingGameState)
+            'initialFood': startingGameState.getFood().asList(),
+            'foodIndices': getFoodIndices(startingGameState),
+            'foodAdjMatrix': getFoodAdjacencyMatrix(startingGameState),
+            'mazeDistFn': partial(mazeDistance, startingGameState)
         }
 
     def getStartState(self):
@@ -530,6 +536,7 @@ def minimumSpanningTreeTotalWeight(adjM):
     mst = nx.minimum_spanning_tree(g)
     return sum(e[2]['weight'] for e in mst.edges(data=True))
 
+
 def foodAdjMatrixAfterEating(problem, foodLeft):
     foodList = problem.heuristicInfo['initialFood']
     foodIndices = problem.heuristicInfo['foodIndices']
@@ -538,6 +545,7 @@ def foodAdjMatrixAfterEating(problem, foodLeft):
         i = foodIndices[f]
         M[i, :] = M[:, i] = 0
     return M
+
 
 def foodHeuristic(state, problem):
     """
@@ -601,14 +609,8 @@ class ClosestDotSearchAgent(SearchAgent):
         Returns a path (a list of actions) to the closest dot, starting from
         gameState.
         """
-        # Here are some useful elements of the startState
-        startPosition = gameState.getPacmanPosition()
-        food = gameState.getFood()
-        walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
-
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return search.bfs(problem)
 
 
 class AnyFoodSearchProblem(PositionSearchProblem):
@@ -643,14 +645,12 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         complete the problem definition.
         """
         x, y = state
-
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.food[x][y]
 
 
 def mazeDistance(gameState, point1, point2):
     """
-    Returns the maze distance between any two points, using the search functions
+    Returns the maze path between any two points, using the search functions
     you have already built. The gameState can be any game state -- Pacman's
     position in that state is ignored.
 

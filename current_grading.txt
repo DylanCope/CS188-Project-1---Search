@@ -1,4 +1,4 @@
-Starting on 10-8 at 17:28:04
+Starting on 10-12 at 10:49:30
 
 Question q1
 ===========
@@ -133,24 +133,101 @@ path length: 106
 Question q7
 ===========
 *** PASS: test_cases\q7\food_heuristic_1.test
-*** FAIL: test_cases\q7\food_heuristic_10.test
-*** Heuristic failed non-triviality test
-*** Tests failed.
+*** PASS: test_cases\q7\food_heuristic_10.test
+*** PASS: test_cases\q7\food_heuristic_11.test
+*** PASS: test_cases\q7\food_heuristic_12.test
+*** PASS: test_cases\q7\food_heuristic_13.test
+*** PASS: test_cases\q7\food_heuristic_14.test
+*** PASS: test_cases\q7\food_heuristic_15.test
+*** PASS: test_cases\q7\food_heuristic_16.test
+*** PASS: test_cases\q7\food_heuristic_17.test
+*** PASS: test_cases\q7\food_heuristic_2.test
+*** PASS: test_cases\q7\food_heuristic_3.test
+*** PASS: test_cases\q7\food_heuristic_4.test
+*** PASS: test_cases\q7\food_heuristic_5.test
+*** PASS: test_cases\q7\food_heuristic_6.test
+*** PASS: test_cases\q7\food_heuristic_7.test
+*** PASS: test_cases\q7\food_heuristic_8.test
+*** PASS: test_cases\q7\food_heuristic_9.test
+*** PASS: test_cases\q7\food_heuristic_grade_tricky.test
+*** 	expanded nodes: 255
+*** 	thresholds: [15000, 12000, 9000, 7000]
 
-### Question q7: 0/4 ###
+### Question q7: 5/4 ###
 
 
 Question q8
 ===========
 [SearchAgent] using function depthFirstSearch
 [SearchAgent] using problem type PositionSearchProblem
-*** Method not implemented: findPathToClosestDot at line 557 of searchAgents.py
-*** FAIL: Terminated with a string exception.
+*** PASS: test_cases\q8\closest_dot_1.test
+*** 	pacman layout:		Test 1
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+*** PASS: test_cases\q8\closest_dot_10.test
+*** 	pacman layout:		Test 10
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+*** PASS: test_cases\q8\closest_dot_11.test
+*** 	pacman layout:		Test 11
+*** 	solution length:		2
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+*** PASS: test_cases\q8\closest_dot_12.test
+*** 	pacman layout:		Test 12
+*** 	solution length:		3
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+*** PASS: test_cases\q8\closest_dot_13.test
+*** 	pacman layout:		Test 13
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+*** PASS: test_cases\q8\closest_dot_2.test
+*** 	pacman layout:		Test 2
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+*** PASS: test_cases\q8\closest_dot_3.test
+*** 	pacman layout:		Test 3
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+*** PASS: test_cases\q8\closest_dot_4.test
+*** 	pacman layout:		Test 4
+*** 	solution length:		3
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+*** PASS: test_cases\q8\closest_dot_5.test
+*** 	pacman layout:		Test 5
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+*** PASS: test_cases\q8\closest_dot_6.test
+*** 	pacman layout:		Test 6
+*** 	solution length:		2
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+*** PASS: test_cases\q8\closest_dot_7.test
+*** 	pacman layout:		Test 7
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+*** PASS: test_cases\q8\closest_dot_8.test
+*** 	pacman layout:		Test 8
+*** 	solution length:		1
+[SearchAgent] using function depthFirstSearch
+[SearchAgent] using problem type PositionSearchProblem
+*** PASS: test_cases\q8\closest_dot_9.test
+*** 	pacman layout:		Test 9
+*** 	solution length:		1
 
-### Question q8: 0/3 ###
+### Question q8: 3/3 ###
 
 
-Finished at 17:28:04
+Finished at 10:49:32
 
 Provisional grades
 ==================
@@ -160,10 +237,10 @@ Question q3: 3/3
 Question q4: 3/3
 Question q5: 3/3
 Question q6: 3/3
-Question q7: 0/4
-Question q8: 0/3
+Question q7: 5/4
+Question q8: 3/3
 ------------------
-Total: 18/25
+Total: 26/25
 
 Your grades are NOT yet registered.  To register your grades, make sure
 to follow your instructor's guidelines to receive credit on your project.
